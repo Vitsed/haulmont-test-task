@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Entity
 @EqualsAndHashCode(callSuper = true)
@@ -26,12 +27,11 @@ public class Student extends AbstractEntity implements Cloneable {
     private String patronymic = "";
 
     @NotNull
-    @NotEmpty
+    @Positive
     private Integer yearOfBirth = 0;
 
     @ManyToOne
     @JoinColumn(name = "studentGroup_id")
     private StudentGroup studentGroup;
-
 
 }
