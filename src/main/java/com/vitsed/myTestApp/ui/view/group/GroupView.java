@@ -8,6 +8,7 @@ import com.vaadin.flow.router.Route;
 import com.vitsed.myTestApp.backend.entity.StudentGroup;
 import com.vitsed.myTestApp.backend.service.GroupService;
 import com.vitsed.myTestApp.ui.MainLayout;
+import com.vitsed.myTestApp.ui.view.ButtonsLayout;
 
 @Route(value = "groups", layout = MainLayout.class)
 @PageTitle("Groups | Student App")
@@ -15,14 +16,17 @@ public class GroupView extends VerticalLayout {
 
     private final GroupService groupService;
     private Grid<StudentGroup> grid = new Grid<>();
-
+    private ButtonsLayout buttonsLayout = new ButtonsLayout();
     public GroupView(GroupService groupService) {
         this.groupService = groupService;
-
-        add(new H1("Group list will be here"));
+        addClassName("group-view");
+        setSizeFull();
+        configureGrid();
+        add(new H1("Список групп"), grid, buttonsLayout.createViewButtonsLayout());
+        updateList();
     }
 
-    private void configureGrid() {
+    private void  configureGrid() {
         grid.addClassName("group-grid");
         grid.setSizeFull();
         grid.removeAllColumns();
@@ -30,4 +34,7 @@ public class GroupView extends VerticalLayout {
         grid.addColumn(StudentGroup::getFacultyName).setHeader("Факультет");
     }
 
+    private void updateList() {
+        grid.setItems(groupService.findAll());
+    }
 }

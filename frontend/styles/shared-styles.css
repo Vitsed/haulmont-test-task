@@ -17,14 +17,14 @@ a[highlight] {
 /* Group view */
 
 .group-view {
-
+  display: flex;
 }
 /* Student view */
-.student-view .content {
+.student-view  {
   display: flex;
 }
 
-.student-view .student-grid {
+.student-view .student-grid .group-view .group-grid{
   flex: 2;
 }
 

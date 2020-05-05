@@ -24,9 +24,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public UserDetailsService userDetailsService() {
         UserDetails user =
-                User.withUsername("user")
-                        .password("{noop}password")
-                        .roles("USER")
+                User.withUsername("admin")
+                        .password("{noop}pass")
+                        .roles("ADMIN")
                         .build();
 
         return new InMemoryUserDetailsManager(user);

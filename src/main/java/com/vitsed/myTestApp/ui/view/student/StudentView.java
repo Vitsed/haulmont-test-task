@@ -2,6 +2,8 @@ package com.vitsed.myTestApp.ui.view.student;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -10,6 +12,7 @@ import com.vaadin.flow.router.Route;
 import com.vitsed.myTestApp.backend.entity.Student;
 import com.vitsed.myTestApp.backend.service.StudentService;
 import com.vitsed.myTestApp.ui.MainLayout;
+import com.vitsed.myTestApp.ui.view.ButtonsLayout;
 
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Students | Student App")
@@ -19,25 +22,31 @@ public class StudentView extends VerticalLayout {
     private Grid<Student> grid = new Grid<>(Student.class);
     private  TextField filterByLastName;
     private  TextField filterByGroupNumber;
-    // Кнопки
-    private Button add = new Button("Добавить");
-    private Button edit = new Button("Изменить");
-    private Button delete = new Button("Удалить");
+    private ButtonsLayout buttonsLayout = new ButtonsLayout();
+    private StudentForm form;
+
 
     public StudentView(StudentService contactService) {
-        HorizontalLayout filterLayout = new HorizontalLayout();
-        filterByLastName = new TextField("Filter by last name...");
-        filterByGroupNumber = new TextField("Filter by group number...");
-        filterLayout.add(filterByLastName, filterByGroupNumber);
-
-        HorizontalLayout buttonsLayout = new HorizontalLayout();
-        buttonsLayout.add(add, edit, delete);
         this.contactService = contactService;
         addClassName("student-view");
         setSizeFull();
+
+        HorizontalLayout filterLayout = new HorizontalLayout();
+        filterByLastName = new TextField();
+        filterByLastName.setPlaceholder("По фамилии...");
+        filterByGroupNumber = new TextField();
+        filterByGroupNumber.setPlaceholder("По номеру группы...");
+        Button applyButton = new Button("Применить");
+
+        filterLayout.add(filterByLastName, filterByGroupNumber, applyButton);
+        filterLayout.addClassName("filter-view");
+        filterLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+
         configureGrid();
 
-        add(filterLayout, grid, buttonsLayout);
+//        form = new StudentForm();
+
+        add(new H1("Список студентов"),filterLayout, grid, buttonsLayout.createViewButtonsLayout());
         updateList();
     }
 
