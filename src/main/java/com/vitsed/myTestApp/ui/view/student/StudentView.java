@@ -1,16 +1,19 @@
-package com.vitsed.myTestApp;
+package com.vitsed.myTestApp.ui.view.student;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vitsed.myTestApp.backend.entity.Student;
 import com.vitsed.myTestApp.backend.service.StudentService;
+import com.vitsed.myTestApp.ui.MainLayout;
 
-@Route("")
-public class MainView extends VerticalLayout {
+@Route(value = "", layout = MainLayout.class)
+@PageTitle("Students | Student App")
+public class StudentView extends VerticalLayout {
 
     private StudentService contactService;
     private Grid<Student> grid = new Grid<>(Student.class);
@@ -21,7 +24,7 @@ public class MainView extends VerticalLayout {
     private Button edit = new Button("Изменить");
     private Button delete = new Button("Удалить");
 
-    public MainView(StudentService contactService) {
+    public StudentView(StudentService contactService) {
         HorizontalLayout filterLayout = new HorizontalLayout();
         filterByLastName = new TextField("Filter by last name...");
         filterByGroupNumber = new TextField("Filter by group number...");
@@ -30,7 +33,7 @@ public class MainView extends VerticalLayout {
         HorizontalLayout buttonsLayout = new HorizontalLayout();
         buttonsLayout.add(add, edit, delete);
         this.contactService = contactService;
-        addClassName("list-view");
+        addClassName("student-view");
         setSizeFull();
         configureGrid();
 

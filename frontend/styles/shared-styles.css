@@ -1,12 +1,41 @@
-/*
-   CSS styling examples for the Vaadin app.
-   Visit https://vaadin.com/docs/flow/theme/theming-overview.html and
-   https://vaadin.com/themes/lumo for more information.
-*/
+/* Main layout */
 
-/* Example: CSS class name to center align the content . */
-.centered-content {
-  margin: 0 auto;
-  max-width: 250px;
+a[highlight] {
+  font-weight: bold;
+  text-decoration: underline;
 }
 
+.header {
+  padding: 0 var(--lumo-space-m);
+}
+
+.header h1.logo {
+  font-size: 1em;
+  margin: var(--lumo-space-m);
+}
+
+/* Group view */
+
+.group-view {
+
+}
+/* Student view */
+.student-view .content {
+  display: flex;
+}
+
+.student-view .student-grid {
+  flex: 2;
+}
+
+.student-view .student-form {
+  flex: 1;
+  padding: var(--lumo-space-m);
+}
+
+@media all and (max-width: 1100px) {
+  .student-view.editing .toolbar,
+  .student-view.editing .student-grid {
+    display: none;
+  }
+}
