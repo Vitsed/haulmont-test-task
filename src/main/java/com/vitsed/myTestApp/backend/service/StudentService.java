@@ -29,6 +29,27 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public List<Student> findAll(String filterText) {
+        if(filterText == null || filterText.isEmpty()) {
+            return studentRepository.findAll();
+        } else {
+            return studentRepository.search(filterText);
+        }
+    }
+
+    public List<Student> findAll(Integer filterText) {
+        if(filterText == null) {
+            return studentRepository.findAll();
+        } else {
+            return studentRepository.search(filterText);
+        }
+    }
+
+    public List<Student> findAll(String text, Integer number) {
+        return studentRepository.search(text, number);
+    }
+
+
     public long count() {
         return studentRepository.count();
     }

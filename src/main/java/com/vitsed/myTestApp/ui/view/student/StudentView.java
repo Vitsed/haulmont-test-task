@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vitsed.myTestApp.backend.entity.Student;
@@ -18,35 +19,25 @@ import com.vitsed.myTestApp.ui.view.ButtonsLayout;
 @PageTitle("Students | Student App")
 public class StudentView extends VerticalLayout {
 
-    private StudentService contactService;
     private Grid<Student> grid = new Grid<>(Student.class);
     private  TextField filterByLastName;
     private  TextField filterByGroupNumber;
     private ButtonsLayout buttonsLayout = new ButtonsLayout();
     private StudentForm form;
 
+    private StudentService studentService;
 
-    public StudentView(StudentService contactService) {
-        this.contactService = contactService;
+    public StudentView(StudentService studentService) {
+        this.studentService = studentService;
         addClassName("student-view");
         setSizeFull();
 
-        HorizontalLayout filterLayout = new HorizontalLayout();
-        filterByLastName = new TextField();
-        filterByLastName.setPlaceholder("По фамилии...");
-        filterByGroupNumber = new TextField();
-        filterByGroupNumber.setPlaceholder("По номеру группы...");
-        Button applyButton = new Button("Применить");
-
-        filterLayout.add(filterByLastName, filterByGroupNumber, applyButton);
-        filterLayout.addClassName("filter-view");
-        filterLayout.setJustifyContentMode(JustifyContentMode.CENTER);
 
         configureGrid();
 
 //        form = new StudentForm();
 
-        add(new H1("Список студентов"),filterLayout, grid, buttonsLayout.createViewButtonsLayout());
+        add(new H1("Список студентов"),getToolBar(), grid, buttonsLayout.createViewButtonsLayout());
         updateList();
     }
 
@@ -61,8 +52,64 @@ public class StudentView extends VerticalLayout {
         grid.addColumn(Student::getStudentGroup).setHeader("Группа");
     }
 
-    private void updateList() {
-        grid.setItems(contactService.findAll());
+
+    private HorizontalLayout getToolBar() {
+        filterByLastName = new TextField();
+        filterByLastName.setPlaceholder("По фамилии...");
+        filterByLastName.setClearButtonVisible(true);
+//        filterByLastName.setValueChangeMode(ValueChangeMode.LAZY);
+//        filterByLastName.addValueChangeListener(e -> updateList());
+
+        filterByGroupNumber = new TextField();
+        filterByGroupNumber.setPlaceholder("По номеру группы...");
+        filterByGroupNumber.setClearButtonVisible(true);
+//        filterByGroupNumber.setValueChangeMode(ValueChangeMode.LAZY);
+//        filterByGroupNumber.addValueChangeListener(e -> updateList());
+
+        Button applyButton = new Button("Применить", e -> {
+            updateList(filterByLastName, filterByGroupNumber);
+        });
+
+        HorizontalLayout toolbar = new HorizontalLayout(filterByLastName, filterByGroupNumber, applyButton);
+        toolbar.addClassName("toolbar");
+        return toolbar;
     }
 
+    private void editStudent(Student student) {
+        if (student == null) {
+            closeEditor();
+        } else {
+
+        }
+    }
+
+    private void closeEditor() {
+
+    }
+
+    private void updateList() {
+        grid.setItems(studentService.findAll());
+    }
+
+    private void updateList(TextField field, TextField numberField) {
+        String lastName = null;
+        int groupNumber = 0;
+
+        if(!field.isEmpty()) {
+            lastName = field.getValue();
+        }
+        if(!numberField.isEmpty()) {
+            groupNumber = Integer.parseInt(numberField.getValue());
+        }
+
+        if(lastName == null && groupNumber == 0) {
+            updateList();
+        } else if(groupNumber != 0 && lastName == null) {
+            grid.setItems(studentService.findAll(groupNumber));
+        } else if (groupNumber == 0) {
+            grid.setItems(studentService.findAll(lastName));
+        } else {
+            grid.setItems(studentService.findAll(lastName, groupNumber));
+        }
+    }
 }
