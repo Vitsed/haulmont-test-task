@@ -10,9 +10,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
-import com.vitsed.myTestApp.ui.view.group.GroupForm;
+import com.vitsed.myTestApp.ui.view.group.GroupDialogWindow;
 import com.vitsed.myTestApp.ui.view.group.GroupView;
-import com.vitsed.myTestApp.ui.view.student.StudentForm;
 import com.vitsed.myTestApp.ui.view.student.StudentView;
 
 @CssImport("./styles/shared-styles.css")
@@ -47,8 +46,7 @@ public class MainLayout extends AppLayout {
         addToDrawer(new VerticalLayout(
                 listLink,
                 new RouterLink("Группы", GroupView.class),
-                new RouterLink("StudentForm", StudentForm.class),
-                new RouterLink("GroupForm", GroupForm.class)
+                new RouterLink("GroupForm", GroupDialogWindow.class)
         ));
     }
 }
