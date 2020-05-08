@@ -20,11 +20,11 @@ public class Student extends AbstractEntity implements Cloneable {
 
     @NotNull
     @NotEmpty
-    private String lastName = "";
+    private String lastName ="";
 
     @NotNull
     @NotEmpty
-    private String patronymic = "";
+    private String patronymic="";
 
     @NotNull
     @Positive

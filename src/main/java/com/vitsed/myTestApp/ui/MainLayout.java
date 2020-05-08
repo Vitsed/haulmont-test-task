@@ -45,8 +45,7 @@ public class MainLayout extends AppLayout {
 
         addToDrawer(new VerticalLayout(
                 listLink,
-                new RouterLink("Группы", GroupView.class),
-                new RouterLink("GroupForm", GroupDialogWindow.class)
+                new RouterLink("Группы", GroupView.class)
         ));
     }
 }

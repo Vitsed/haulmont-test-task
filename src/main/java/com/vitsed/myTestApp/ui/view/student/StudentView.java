@@ -1,18 +1,19 @@
 package com.vitsed.myTestApp.ui.view.student;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vitsed.myTestApp.backend.entity.Student;
+import com.vitsed.myTestApp.backend.service.GroupService;
 import com.vitsed.myTestApp.backend.service.StudentService;
 import com.vitsed.myTestApp.ui.MainLayout;
 import com.vitsed.myTestApp.utils.names.Designation;
@@ -21,21 +22,23 @@ import com.vitsed.myTestApp.utils.names.Designation;
 @PageTitle("Students | Student App")
 public class StudentView extends VerticalLayout {
 
-    private Grid<Student> grid = new Grid<>(Student.class);
+    private final Grid<Student> grid = new Grid<>(Student.class);
     private TextField filterByLastName;
-    private NumberField filterByGroupNumber;
-    private Button add = new Button(Designation.BUTTON_ADD);
-    private Button edit = new Button(Designation.BUTTON_EDIT);
-    private Button delete = new Button(Designation.BUTTON_DELETE);
-    private StudentDialogWindow dialogWindow = new StudentDialogWindow();
+    private TextField filterByGroupNumber;
+    private final Button add = new Button(Designation.BUTTON_ADD);
+    private final Button edit = new Button(Designation.BUTTON_EDIT);
+    private final Button delete = new Button(Designation.BUTTON_DELETE);
+    private Student student;
+    private final StudentDialogWindow dialogWindow;
 
-    private StudentService studentService;
+    private final StudentService studentService;
 
-    public StudentView(StudentService studentService) {
+    public StudentView(StudentService studentService, GroupService groupService) {
         this.studentService = studentService;
         addClassName("student-view");
         setSizeFull();
 
+        dialogWindow = new StudentDialogWindow(studentService, groupService);
         configureGrid();
 
         add(new H1("Список студентов"),getToolBar(), grid, createButtonsLayout());
@@ -46,26 +49,29 @@ public class StudentView extends VerticalLayout {
         grid.addClassName("student-grid");
         grid.setSizeFull();
         grid.removeAllColumns();
-        grid.addColumn(Student::getLastName).setHeader("Фамилия").setSortable(true);
+        grid.addColumn(Student::getLastName).setHeader("Фамилия");
         grid.addColumn(Student::getFirstName).setHeader("Имя");
         grid.addColumn(Student::getPatronymic).setHeader("Отчество");
         grid.addColumn(Student::getYearOfBirth).setHeader("Год рождения");
         grid.addColumn(Student::getStudentGroup).setHeader("Группа");
+        grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        grid.addItemClickListener(item -> student = item.getItem());
     }
+
 
     private HorizontalLayout getToolBar() {
         filterByLastName = new TextField();
         filterByLastName.setPlaceholder("Фамилия...");
         filterByLastName.setClearButtonVisible(true);
-//        filterByLastName.setValueChangeMode(ValueChangeMode.LAZY);
+        filterByLastName.setValueChangeMode(ValueChangeMode.LAZY);
 //        filterByLastName.addValueChangeListener(e -> updateList());
 
-        filterByGroupNumber = new NumberField();
+        filterByGroupNumber = new TextField();
         filterByGroupNumber.setPlaceholder("Номер группы...");
         filterByGroupNumber.setClearButtonVisible(true);
-//        filterByGroupNumber.setValueChangeMode(ValueChangeMode.LAZY);
+        filterByGroupNumber.setValueChangeMode(ValueChangeMode.LAZY);
 //        filterByGroupNumber.addValueChangeListener(e -> updateList());
-
+        
         Button applyButton = new Button("Применить", e -> {
             updateList(filterByLastName, filterByGroupNumber);
         });
@@ -75,43 +81,42 @@ public class StudentView extends VerticalLayout {
         return toolbar;
     }
 
-    private void openDialogWindow() {
-        dialogWindow.open();
-    }
-
-
     private Component createButtonsLayout() {
         add.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         edit.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        add.addClickShortcut(Key.ENTER);
-        edit.addClickShortcut(Key.ESCAPE);
+        add.addClickListener(click -> {
+            dialogWindow.addStudent(new Student(), true);
+            dialogWindow.open();
+        });
 
-        add.addClickListener(click -> dialogWindow.open());
+        edit.addClickListener(click -> {
+            if(student != null) {
+                dialogWindow.addStudent(student, true);
+                dialogWindow.open();
+            } else {
+                Notification.show("Студент не выбран!");
+            }
+        });
+
+        delete.addClickListener(click -> {
+            if(student != null) {
+                dialogWindow.addStudent(student, false);
+                dialogWindow.open();
+            } else {
+                Notification.show("Студент не выбран!");
+            }
+        });
 
         return new HorizontalLayout(add, edit, delete);
     }
-
-
-    private void addStudent() {
-
-    }
-
-    private void editStudent(Student student) {
-
-    }
-
-    private void deleteStudent(Student student) {
-
-    }
-
 
     private void updateList() {
         grid.setItems(studentService.findAll());
     }
 
-    private void updateList(TextField field, NumberField numberField) {
+    private void updateList(TextField field, TextField numberField) {
         String lastName = null;
         int groupNumber = 0;
 
@@ -119,7 +124,7 @@ public class StudentView extends VerticalLayout {
             lastName = field.getValue();
         }
         if(!numberField.isEmpty()) {
-            groupNumber = (int)numberField.getValue().longValue();
+            groupNumber = Integer.parseInt(numberField.getValue());
         }
 
         if(lastName == null && groupNumber == 0) {
