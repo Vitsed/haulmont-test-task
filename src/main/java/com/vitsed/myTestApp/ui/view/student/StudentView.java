@@ -28,6 +28,9 @@ public class StudentView extends VerticalLayout {
     private final Button add = new Button(Designation.BUTTON_ADD);
     private final Button edit = new Button(Designation.BUTTON_EDIT);
     private final Button delete = new Button(Designation.BUTTON_DELETE);
+//    private final ComboBox<>
+
+
     private Student student;
     private final StudentDialogWindow dialogWindow;
 
@@ -54,6 +57,7 @@ public class StudentView extends VerticalLayout {
         grid.addColumn(Student::getPatronymic).setHeader("Отчество");
         grid.addColumn(Student::getYearOfBirth).setHeader("Год рождения");
         grid.addColumn(Student::getStudentGroup).setHeader("Группа");
+        grid.addColumn(student -> student.getStudentGroup().getFacultyName()).setHeader("Факультет");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(item -> student = item.getItem());
     }

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -12,6 +13,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vitsed.myTestApp.backend.entity.Student;
+import com.vitsed.myTestApp.backend.entity.StudentGroup;
 import com.vitsed.myTestApp.backend.service.GroupService;
 import com.vitsed.myTestApp.backend.service.StudentService;
 import com.vitsed.myTestApp.utils.names.Designation;
@@ -22,8 +24,7 @@ public class StudentDialogWindow extends Dialog {
     TextField lastName = new TextField(Designation.LAST_NAME);
     TextField patronymic = new TextField(Designation.PATRONYMIC);
     TextField yearOfBirth = new TextField(Designation.YEAR_OF_BIRTH);
-    TextField studentGroup = new TextField(Designation.GROUP_NUMBER);
-    Student student;
+    ComboBox<StudentGroup> studentGroup = new ComboBox<>(Designation.GROUP_NUMBER);
     Button ok = new Button(Designation.BUTTON_OK);
     Button cancel = new Button(Designation.BUTTON_CANCEL);
     boolean flag;
@@ -38,7 +39,8 @@ public class StudentDialogWindow extends Dialog {
         binder.bind(lastName, Student::getLastName, Student::setLastName);
         binder.bind(patronymic, Student::getPatronymic, Student::setPatronymic);
         binder.forField(yearOfBirth).withConverter(new StringToIntegerConverter("Укажите год рождения")).bind(Student::getYearOfBirth, Student::setYearOfBirth);
-
+        binder.forField(studentGroup).bind(Student::getStudentGroup, Student::setStudentGroup);
+        studentGroup.setItems(groupService.findAll());
         setWidth("800px");
         setHeight("500px");
 
@@ -49,15 +51,17 @@ public class StudentDialogWindow extends Dialog {
             studentGroup, createButtonsLayout()));
     }
 
+
+
     private Component createButtonsLayout() {
         ok.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         ok.addClickListener(click -> {
             if(flag) {
-                studentService.save(student);
+                studentService.save(binder.getBean());
             } else {
-                studentService.delete(student);
+                studentService.delete(binder.getBean());
             }
             clearFields();
             close();
@@ -83,7 +87,6 @@ public class StudentDialogWindow extends Dialog {
     //Events
     public void addStudent(Student student, boolean flag) {
         binder.setBean(student);
-        this.student = student;
         this.flag = flag;
     }
 }

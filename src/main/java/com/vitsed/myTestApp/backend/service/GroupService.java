@@ -27,7 +27,11 @@ public class GroupService {
     }
 
     public void delete(StudentGroup studentGroup) {
-        groupRepository.delete(studentGroup);
+        if(studentGroup.getStudents().size() == 0) {
+            groupRepository.delete(studentGroup);
+        } else {
+            LOGGER.log(Level.SEVERE, "В группе есть студенты, удалить нельзя");
+        }
     }
 
     public void save(StudentGroup studentGroup) {
