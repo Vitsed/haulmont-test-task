@@ -1,0 +1,42 @@
+CREATE TABLE students (
+    student_id INT NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    patronymic VARCHAR(255) NOT NULL,
+    year_of_birth INT NOT NULL,
+    group_id INT,
+    PRIMARY KEY (student_id),
+    FOREIGN KEY (group_id) REFERENCES student_groups(group_id)
+);
+
+CREATE TABLE student_groups (
+    group_id INT NOT NULL PRIMARY KEY,
+    group_number INT NOT NULL,
+    faculty_name VARCHAR(255) NOT NULL
+);
+
+// данные таблицы students
+SELECT * FROM students;
+
+// данные таблицы student_groups
+SELECT * FROM student_groups;
+
+// запрос для получения данных с учетом номера группы
+SELECT first_name, last_name, patronymic, year_of_birth, student_groups.group_number AS group_number
+FROM students 
+LEFT JOIN student_groups
+ON students.group_id = student_groups.group_id;
+
+// добавление нового студента
+INSERT INTO students(first_name, last_name, patronymic, year_of_birth, group_id) VALUES('Anton', 'Andreev', 'Valerevich',2000,2);
+
+// доавление новой группы
+INSERT INTO student_groups(group_number, faculty_name) VALUES(105, 'FAIT'); 
+
+// обновление данных о студенте
+UPDATE students 
+SET first_name = 'ALpha', last_name = 'Beta', patronymic = 'Value', year_of_birth = 2000
+WHERE students_id = 1;
+
+// удалиение студента
+DELETE FROM students WHERE sutdents_id = 1;
