@@ -5,7 +5,7 @@
 и соответсенно создавать и добавлять студентов в группы.
 
 <h1>Используемые технологии.</h1> 
-Vaadin 14 - frontend (UI) <br>
+Vaadin 14 - frontend (UI) update 19 <br>
 Amazon Coretto (JDK 11) <br>
 Spring Boot - (Data, Security) <br>
 Maven <br>
